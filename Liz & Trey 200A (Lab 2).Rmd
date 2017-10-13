@@ -72,9 +72,19 @@ fit
 summary(fit)
 anova(fit)
 ```
+Challenge Problem 1: Phylogenetically Independent Contrasts
 
+Fit a OLS (non-phylogenetic) regression model for y~x and a phylogenetic regression model using contrasts. What do you find? Why?
 
-
-
+Updated from Liam J. Revell’s Macroevolution in R Course, 2016. Last updated Oct. 2016
+```{r}
+picdat<-read.csv("pic-exercise-data.csv",row.names=1);
+head(picdat)
+picmod<-lm(y~x,data=picdat)
+plot(picmod)
+summary(picmod)
+anova(picmod)
+```
+We find that x does not predict y. P is significant for the intercept, but not for the x values.
 
 
