@@ -9,9 +9,9 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Brownian motion is a stochastic continuous-time random walk model in which changes from one time to the next are random draws from some distribution with mean 0.0 and variance σ2. The expected variance under Brownian motion increases linearly through time with instantaneous rate σ2.
+Brownian motion is a stochastic continuous-time random walk model in which changes from one time to the next are random draws from some distribution with mean 0.0 and variance sigma2. The expected variance under Brownian motion increases linearly through time with instantaneous rate sigma2.
 
-Brownian motion is very easy to simulate. To start off, let’s simulate a single instance of Brownian motion for 100 generations of discrete time in which the variance of the diffusion process is σ2 = 0.01 per generation. In this case, we will draw our evolutionary changes from a normal distribution; however it’s worth noting that (due to the CLT) regardless of the distribution, evolution will proceed by Brownian motion as the width of our timesteps decrease towards zero!
+Brownian motion is very easy to simulate. To start off, let’s simulate a single instance of Brownian motion for 100 generations of discrete time in which the variance of the diffusion process is sigma2 = 0.01 per generation. In this case, we will draw our evolutionary changes from a normal distribution; however it’s worth noting that (due to the CLT) regardless of the distribution, evolution will proceed by Brownian motion as the width of our timesteps decrease towards zero!
 ```{r}
 t<-0:100 # time
 sig2<-0.01
@@ -33,7 +33,7 @@ plot(t,X[1,],xlab="time",ylab="phenotype",ylim=c(-2,2),type="l")
 apply(X[2:nsim,],1,function(x,t) lines(t,x),t=t)
 ```
 
-To see how the outcome depends on σ2, let’s compare the result when we divide sig2 by 10:
+To see how the outcome depends on sigma2, let’s compare the result when we divide sig2 by 10:
 ```{r}
 X<-matrix(rnorm(n=nsim*(length(t)-1),sd=sqrt(sig2/10)),nsim,length(t)-1)
 X<-cbind(rep(0,nsim),t(apply(X,1,cumsum)))
@@ -41,7 +41,7 @@ plot(t,X[1,],xlab="time",ylab="phenotype",ylim=c(-2,2),type="l")
 apply(X[2:nsim,],1,function(x,t) lines(t,x),t=t)
 ```
 
-The expected variance under Brownian motion is just σ2 × t. To see this easiest, we can just do the following. Here I will use 10,000 simulations for 100 generations under the same conditions to “smooth out” our result:
+The expected variance under Brownian motion is just sigma2 × t. To see this easiest, we can just do the following. Here I will use 10,000 simulations for 100 generations under the same conditions to “smooth out” our result:
 ```{r}
 nsim<-10000
 X<-matrix(rnorm(n=nsim*(length(t)-1),sd=sqrt(sig2)),nsim,length(t)-1)
@@ -71,7 +71,7 @@ Try simulating Brownian motion on the tree that you used for your lab last week.
 ```{r}
 canitree<-read.nexus("canitree.nex")
 library(phytools)
-t<-100 # total time
+t<-43 # total time
 n<-34 # total taxa
 b<-(log(n)-log(2))/t
 plotTree(canitree,mar=c(3.1,0.1,0.1,0.1))

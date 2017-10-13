@@ -83,7 +83,8 @@ Regression Model:
 picdat<-read.csv("pic-exercise-data.csv",row.names=1);
 head(picdat)
 picmod<-lm(y~x,data=picdat)
-plot(picmod,xlab="Y",ylab="X")
+plot(picmod)
+title(main="Regression Model",xlab="Y",ylab = "X")
 summary(picmod)
 anova(picmod)
 ```
