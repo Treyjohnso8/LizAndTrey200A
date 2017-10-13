@@ -1,0 +1,84 @@
+---
+title: "Liz & Trey 200A (Lab 2) Brownian Motion"
+author: "WT Johnson III; Elizabeth Karan"
+date: "10/13/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Brownian motion is a stochastic continuous-time random walk model in which changes from one time to the next are random draws from some distribution with mean 0.0 and variance σ2. The expected variance under Brownian motion increases linearly through time with instantaneous rate σ2.
+
+Brownian motion is very easy to simulate. To start off, let’s simulate a single instance of Brownian motion for 100 generations of discrete time in which the variance of the diffusion process is σ2 = 0.01 per generation. In this case, we will draw our evolutionary changes from a normal distribution; however it’s worth noting that (due to the CLT) regardless of the distribution, evolution will proceed by Brownian motion as the width of our timesteps decrease towards zero!
+```{r}
+t<-0:100 # time
+sig2<-0.01
+## first, simulate a set of random deviates
+x<-rnorm(n=length(t)-1,sd=sqrt(sig2))
+## now compute their cumulative sum
+x<-c(0,cumsum(x))
+plot(t,x,type="l",ylim=c(-2,2))
+```
+
+The trick here is that we draw random normal deviates for the change over each t time intervals; and then to get the state of our chain at each time interval we just compute the cumulative sum of all the individual changes using cumsum. We can do this because the distribution of the changes under Brownian motion is invariant and does not depend on the state of the chain.
+
+We can also easily do a whole bunch of simulations like this at once, using the same conditions:
+```{r}
+nsim<-100
+X<-matrix(rnorm(n=nsim*(length(t)-1),sd=sqrt(sig2)),nsim,length(t)-1)
+X<-cbind(rep(0,nsim),t(apply(X,1,cumsum)))
+plot(t,X[1,],xlab="time",ylab="phenotype",ylim=c(-2,2),type="l")
+apply(X[2:nsim,],1,function(x,t) lines(t,x),t=t)
+```
+
+To see how the outcome depends on σ2, let’s compare the result when we divide sig2 by 10:
+```{r}
+X<-matrix(rnorm(n=nsim*(length(t)-1),sd=sqrt(sig2/10)),nsim,length(t)-1)
+X<-cbind(rep(0,nsim),t(apply(X,1,cumsum)))
+plot(t,X[1,],xlab="time",ylab="phenotype",ylim=c(-2,2),type="l")
+apply(X[2:nsim,],1,function(x,t) lines(t,x),t=t)
+```
+
+The expected variance under Brownian motion is just σ2 × t. To see this easiest, we can just do the following. Here I will use 10,000 simulations for 100 generations under the same conditions to “smooth out” our result:
+```{r}
+nsim<-10000
+X<-matrix(rnorm(n=nsim*(length(t)-1),sd=sqrt(sig2)),nsim,length(t)-1)
+X<-cbind(rep(0,nsim),t(apply(X,1,cumsum)))
+v<-apply(X,2,var)
+plot(t,v,type="l",xlab="time",ylab="variance among simulations")
+var(X[,length(t)]) # this should be about 1.00
+```
+
+OK, now let’s try to simulate using Brownian motion up the branches of a tree. We first need a tree, so let’s simulate one using pbtree in phytools:
+```{r}
+library(phytools)
+t<-100 # total time
+n<-30 # total taxa
+b<-(log(n)-log(2))/t
+tree<-pbtree(b=b,n=n,t=t)
+plotTree(tree,mar=c(3.1,0.1,0.1,0.1))
+axis(1)
+## simulate Brownian evolution on a tree with fastBM
+x<-fastBM(tree,sig2=sig2,internal=TRUE)
+## visualize Brownian evolution on a tree
+phenogram(tree,x,spread.labels=TRUE,spread.cost=c(1,0))
+```
+
+Exercise
+Try simulating Brownian motion on the tree that you used for your lab last week. Plot the phenogram.
+```{r}
+canitree<-read.nexus("canitree.nex")
+library(phytools)
+t<-100 # total time
+n<-34 # total taxa
+b<-(log(n)-log(2))/t
+plotTree(canitree,mar=c(3.1,0.1,0.1,0.1))
+axis(1)
+## simulate Brownian evolution on a tree with fastBM
+x<-fastBM(canitree,sig2=sig2,internal=TRUE)
+## visualize Brownian evolution on a tree
+phenogram(canitree,x,spread.labels=TRUE,spread.cost=c(1,0))
+```
+
